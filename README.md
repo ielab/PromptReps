@@ -27,6 +27,8 @@ pip install pyserini
 ```
 If you have any issues with the pyserini installation, please follow this [link](https://github.com/castorini/pyserini/blob/master/docs/installation.md).
 
+---
+
 ## Examples
 In this example, we show an experiments with nfcorpus dataset using the [microsoft/Phi-3-mini-4k-instruct](https://huggingface.co/microsoft/Phi-3-mini-4k-instruct) model. 
 ### Step 0: Setup the environment variables.
@@ -42,6 +44,8 @@ But you may also need to add prompts in `prompts/${BASE_MODEL}` directory.
 Similarly, you can change the dataset by changing the `DATASET` variable to other BEIR dataset names listed [here](https://github.com/beir-cellar/beir?tab=readme-ov-file#beers-available-datasets).
 
 We store the results and intermediate files in the `OUTPUT_DIR` directory.
+
+---
 
 ### Step 1: Encode dense and sparse representation for the queries and documents.
 
@@ -98,6 +102,8 @@ done
 wait
 ```
 
+---
+
 ### Step 2: Build dense and sparse indices and retrieve results.
 
 #### Dense retrieval:
@@ -149,6 +155,7 @@ python hybrid.py \
 --save_path ${OUTPUT_DIR}/beir/${DATASET}/results/rank.hybrid.trec
 ```
 
+---
 
 ### Step 3: Evaluate the results:
 
