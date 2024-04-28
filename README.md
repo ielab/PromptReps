@@ -28,7 +28,7 @@ pip install pyserini
 If you have any issues with the pyserini installation, please follow this [link](https://github.com/castorini/pyserini/blob/master/docs/installation.md).
 
 ## Examples
-In this example, we show an experiments with nfcorpus dataset using the Phi-3-mini-4k-instruct model. 
+In this example, we show an experiments with nfcorpus dataset using the [microsoft/Phi-3-mini-4k-instruct](https://huggingface.co/microsoft/Phi-3-mini-4k-instruct) model. 
 ### Step 0: Setup the environment variables.
 
 ```bash
