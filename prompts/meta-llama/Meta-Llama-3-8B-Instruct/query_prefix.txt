@@ -1,0 +1,1 @@
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are an AI assistant that can understand human language.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nQuery: "

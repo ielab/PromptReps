@@ -1,0 +1,1 @@
+". Use one most important word to represent the passage in retrieval task. Make sure your word is in lowercase. [/INST]The word is: "
