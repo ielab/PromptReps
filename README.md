@@ -135,7 +135,7 @@ python -m pyserini.search.lucene \
     --topics ${OUTPUT_DIR}/beir/${DATASET}/sparse/query.tsv \
     --output ${OUTPUT_DIR}/beir/${DATASET}/results/rank.sparse.trec \
     --output-format trec \
-    --batch 1 --threads 1 \
+    --batch 32 --threads 16 \
     --hits 1000 \
     --impact --pretokenized --remove-query
 ```
