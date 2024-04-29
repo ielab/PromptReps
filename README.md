@@ -7,6 +7,7 @@ conda create -n promptreps python=3.10
 conda activate promptreps
 ```
 Our code is build on top of the [Tevatron](https://github.com/texttron/tevatron) library. To install the required dependencies, run the following command:
+> Note: our code is tested with Tevatron main branch with commit id d1816cf.
 ```bash
 git clone https://github.com/texttron/tevatron.git
 
