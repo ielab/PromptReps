@@ -53,15 +53,23 @@ def main():
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token_id = tokenizer.unk_token_id if tokenizer.unk_token_id else tokenizer.eos_token_id
     tokenizer.padding_side = 'right'
-    
+
+    if training_args.bf16:
+        torch_dtype = torch.bfloat16
+    elif training_args.fp16:
+        torch_dtype = torch.float16
+    else:
+        torch_dtype = torch.float32
+
     model = PromptRepsLLM.load(
         model_args.model_name_or_path,
         pooling=model_args.pooling,
         normalize=model_args.normalize,
         lora_name_or_path=model_args.lora_name_or_path,
         cache_dir=model_args.cache_dir,
-        trust_remote_code=True
-    ).eval()
+        trust_remote_code=True,
+        torch_dtype=torch_dtype
+    )
 
     encode_dataset = PromptRepsEncodeDataset(
         data_args=data_args,
@@ -87,7 +95,6 @@ def main():
     vocab_dict = tokenizer.get_vocab()
     vocab_dict = {v: k for k, v in vocab_dict.items()}
 
-    # model = model.to(training_args.device)
     model.eval()
 
     for (batch_ids, batch, batch_texts) in tqdm(encode_loader):

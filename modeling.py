@@ -6,6 +6,7 @@ from tevatron.retriever.modeling import EncoderModel
 from typing import Dict, Tuple, Optional
 from dataclasses import dataclass
 from transformers.file_utils import ModelOutput
+from peft import LoraConfig, TaskType, get_peft_model, PeftModel
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +26,35 @@ class EncoderOutput(ModelOutput):
 
 class PromptRepsLLM(EncoderModel):
     TRANSFORMER_CLS = AutoModelForCausalLM
+
+    @classmethod
+    def load(cls,
+            model_name_or_path: str,
+            pooling: str = 'cls',
+            normalize: bool = False,
+            lora_name_or_path: str = None,
+            **hf_kwargs):
+        base_model = cls.TRANSFORMER_CLS.from_pretrained(model_name_or_path,
+                                                         device_map='auto',
+                                                         **hf_kwargs)
+        if base_model.config.pad_token_id is None:
+            base_model.config.pad_token_id = 0
+        if lora_name_or_path:
+            lora_config = LoraConfig.from_pretrained(lora_name_or_path, **hf_kwargs)
+            lora_model = PeftModel.from_pretrained(base_model, lora_name_or_path, config=lora_config)
+            lora_model = lora_model.merge_and_unload()
+            model = cls(
+                encoder=lora_model,
+                pooling=pooling,
+                normalize=normalize
+            )
+        else:
+            model = cls(
+                encoder=base_model,
+                pooling=pooling,
+                normalize=normalize
+            )
+        return model
 
     def encode_query(self, qry):
         outputs = self.encoder(**qry, return_dict=True, output_hidden_states=True)
