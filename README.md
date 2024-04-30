@@ -1,5 +1,5 @@
 # PromptReps
-PromptReps: Prompting Large Language Models to Generate Representations for Zero-Shot Document Retrieval, Shengyao Zhuang, Xueguang Ma, Bevan Koopman, Jimmy Lin and Guido Zuccon.
+[PromptReps: Prompting Large Language Models to Generate Dense and Sparse Representations for Zero-Shot Document Retrieval](https://arxiv.org/pdf/2404.18424), Shengyao Zhuang, Xueguang Ma, Bevan Koopman, Jimmy Lin and Guido Zuccon.
 ## Installation
 We recommend using a conda environment to install the required dependencies.
 ```bash
