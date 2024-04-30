@@ -171,7 +171,7 @@ python -m pyserini.eval.trec_eval -c -m recall.100,1000 -m ndcg_cut.10 beir-v1.0
 python -m pyserini.eval.trec_eval -c -m recall.100,1000 -m ndcg_cut.10 beir-v1.0.0-${DATASET}-test ${OUTPUT_DIR}/beir/${DATASET}/results/rank.hybrid.trec
 ```
 
-You will get following reults:
+You will get following results:
 ```
 Dense results:
 recall_100              all     0.2617
