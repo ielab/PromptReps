@@ -31,7 +31,7 @@ If you have any issues with the pyserini installation, please follow this [link]
 ---
 
 ## Examples
-In this example, we show an experiments with nfcorpus dataset using the [microsoft/Phi-3-mini-4k-instruct](https://huggingface.co/microsoft/Phi-3-mini-4k-instruct) model. 
+In this example, we show an experiment with nfcorpus dataset from [BEIR](https://github.com/beir-cellar/beir) using the [microsoft/Phi-3-mini-4k-instruct](https://huggingface.co/microsoft/Phi-3-mini-4k-instruct) model. 
 ### Step 0: Setup the environment variables.
 
 ```bash
@@ -73,7 +73,7 @@ python encode.py \
     --sparse_exact_match
 ```
 #### Encode documents:
-For large corpus, we sharding the document collection and encode each shard in parallel with multiple GPUs.
+For large corpus, we shard the document collection and encode each shard in parallel with multiple GPUs.
 
 For example, if you have two GPUs:
 ```bash
@@ -171,7 +171,7 @@ python -m pyserini.eval.trec_eval -c -m recall.100,1000 -m ndcg_cut.10 beir-v1.0
 python -m pyserini.eval.trec_eval -c -m recall.100,1000 -m ndcg_cut.10 beir-v1.0.0-${DATASET}-test ${OUTPUT_DIR}/beir/${DATASET}/results/rank.hybrid.trec
 ```
 
-You will get following reults:
+You will get the following results:
 ```
 Dense results:
 recall_100              all     0.2617
@@ -188,4 +188,18 @@ recall_100              all     0.2853
 recall_1000             all     0.5678
 ndcg_cut_10             all     0.3325
 
+```
+
+---
+
+If you used our code for your research, please consider to cite our paper :)
+```
+@misc{zhuang2024promptreps,
+      title={PromptReps: Prompting Large Language Models to Generate Dense and Sparse Representations for Zero-Shot Document Retrieval}, 
+      author={Shengyao Zhuang and Xueguang Ma and Bevan Koopman and Jimmy Lin and Guido Zuccon},
+      year={2024},
+      eprint={2404.18424},
+      archivePrefix={arXiv},
+      primaryClass={cs.IR}
+}
 ```
