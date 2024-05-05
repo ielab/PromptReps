@@ -5,6 +5,10 @@ We recommend using a conda environment to install the required dependencies.
 ```bash
 conda create -n promptreps python=3.10
 conda activate promptreps
+
+# clone this repo
+https://github.com/ielab/PromptReps.git
+cd PromptReps
 ```
 Our code is build on top of the [Tevatron](https://github.com/texttron/tevatron) library. To install the required dependencies, run the following command:
 > Note: our code is tested with Tevatron main branch with commit id d1816cf.
