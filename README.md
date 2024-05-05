@@ -7,7 +7,7 @@ conda create -n promptreps python=3.10
 conda activate promptreps
 
 # clone this repo
-https://github.com/ielab/PromptReps.git
+git clone https://github.com/ielab/PromptReps.git
 cd PromptReps
 ```
 Our code is build on top of the [Tevatron](https://github.com/texttron/tevatron) library. To install the required dependencies, run the following command:
