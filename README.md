@@ -14,7 +14,7 @@ git clone https://github.com/texttron/tevatron.git
 cd tevatron
 pip install transformers datasets peft
 pip install deepspeed accelerate
-pip install faiss-cpu
+pip install faiss-cpu # or 'conda install pytorch::faiss-gpu' for faiss gpu search
 pip install ranx
 pip install nltk
 pip install -e .
@@ -110,13 +110,15 @@ wait
 #### Dense retrieval:
 ```bash
 mkdir -p ${OUTPUT_DIR}/beir/${DATASET}/results
-python -m tevatron.retriever.driver.search \
+python search.py \
     --query_reps ${OUTPUT_DIR}/beir/${DATASET}/dense/query.pkl \
     --passage_reps ${OUTPUT_DIR}'/beir/'${DATASET}'/dense/corpus_*.pkl' \
     --depth 1000 \
     --batch_size 64 \
     --save_text \
     --save_ranking_to ${OUTPUT_DIR}/beir/${DATASET}/results/rank.dense.txt
+# add '--use_gpu' if you want to use gpu for search
+
 
 # convert to trec run format
 python -m tevatron.utils.format.convert_result_to_trec --input ${OUTPUT_DIR}/beir/${DATASET}/results/rank.dense.txt \
