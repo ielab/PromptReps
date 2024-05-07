@@ -2,6 +2,11 @@
 [![arxiv](https://img.shields.io/badge/arXiv-2404.05961-b31b1b.svg)](https://arxiv.org/abs/2404.18424)
 
 [PromptReps: Prompting Large Language Models to Generate Dense and Sparse Representations for Zero-Shot Document Retrieval](https://arxiv.org/pdf/2404.18424), Shengyao Zhuang, Xueguang Ma, Bevan Koopman, Jimmy Lin and Guido Zuccon.
+
+<p align="center">
+  <img src="https://pbs.twimg.com/media/GMa_VMwakAAAEK2?format=jpg&name=medium" width="50%" alt="PromptReps_figure1"/>
+</p>
+
 ## Installation
 We recommend using a conda environment to install the required dependencies.
 ```bash
