@@ -1,4 +1,6 @@
 # PromptReps
+[![arxiv](https://img.shields.io/badge/arXiv-2404.05961-b31b1b.svg)](https://arxiv.org/abs/2404.18424)
+
 [PromptReps: Prompting Large Language Models to Generate Dense and Sparse Representations for Zero-Shot Document Retrieval](https://arxiv.org/pdf/2404.18424), Shengyao Zhuang, Xueguang Ma, Bevan Koopman, Jimmy Lin and Guido Zuccon.
 ## Installation
 We recommend using a conda environment to install the required dependencies.
@@ -199,7 +201,7 @@ ndcg_cut_10             all     0.3325
 ---
 
 If you used our code for your research, please consider to cite our paper :)
-```
+```bibtex
 @misc{zhuang2024promptreps,
       title={PromptReps: Prompting Large Language Models to Generate Dense and Sparse Representations for Zero-Shot Document Retrieval}, 
       author={Shengyao Zhuang and Xueguang Ma and Bevan Koopman and Jimmy Lin and Guido Zuccon},
