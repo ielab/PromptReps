@@ -66,7 +66,7 @@ model = AutoModelForCausalLM.from_pretrained(
 passage = "The quick brown fox jumps over the lazy dog."
 messages = [
     {"role": "system", "content": "You are an AI assistant that can understand human language."},
-    {"role": "user", "content": f'Query: "{passage}". Use one word to represent the passage in a retrieval task. Make sure your word is in lowercase.'},
+    {"role": "user", "content": f'Passage: "{passage}". Use one word to represent the passage in a retrieval task. Make sure your word is in lowercase.'},
     {"role": "assistant", "content": 'The word is "'}
 ]
 
