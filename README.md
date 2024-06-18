@@ -82,7 +82,8 @@ outputs = model(input_ids=input_ids, return_dict=True, output_hidden_states=True
 next_token_reps = outputs.hidden_states[-1][:, -1, :][0]
 
 # sparse representation
-next_token_logits = outputs.logits[:, -1, :][0]
+next_token_logits = torch.log(1 + torch.relu(outputs.logits))[:, -1, :][0]
+
 words_in_text = [word for word in word_tokenize(passage.lower()) if word not in stopwords]
 token_ids_in_text = set()
 for word in words_in_text:
@@ -95,7 +96,7 @@ values = np.rint(top_k_values.cpu().detach().float().numpy() * 100).astype(int)
 tokens = [tokenizer.decode(i) for i in token_ids_in_text[top_k_indices.cpu().detach().float().numpy()]]
 
 print({token: value for token, value in zip(tokens, values)})
-# {'fox': 2162, 'dog': 1538, 'brown': 1475, 'j': 1438, 'quick': 1319, 'lazy': 1206, 'umps': 323}
+# {'fox': 312, 'dog': 280, 'brown': 276, 'j': 273, 'quick': 265, 'lazy': 257, 'umps': 144}
 ```
 
 ## BEIR Example
