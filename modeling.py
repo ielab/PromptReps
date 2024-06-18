@@ -156,9 +156,6 @@ class PromptRepsLLM(EncoderModel):
                             all_reps[active_idx] = grouped_reps
                             all_logits[active_idx] = grouped_logits
 
-                        # all_reps[active_idx] = [all_reps[active_idx][i] for i in start_word_ids]
-                        # all_logits[active_idx] = [all_logits[active_idx][i] for i in start_word_ids]
-
                     else:
                         all_logits[active_idx].append(next_token_logits[idx])
                         all_reps[active_idx].append(next_token_reps[idx])

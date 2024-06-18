@@ -28,19 +28,6 @@ stopwords = set(stopwords.words('english') + list(string.punctuation))
 
 logger = logging.getLogger(__name__)
 
-
-# def get_filtered_ids(tokenizer):
-#     filtered_ids = set()
-#     for token, id in tokenizer.get_vocab().items():
-#         if token[0] == '▁':
-#             token = token[1:]
-#         if not token.isalpha() and not token.isdigit():
-#             continue
-#         if ord('A') <= ord(token[0]) and ord(token[0]) <= ord('Z'):
-#             continue
-#         filtered_ids.add(id)
-#     return filtered_ids
-
 def get_filtered_ids(tokenizer):
     filtered_ids = set()
     for token, id in tokenizer.get_vocab().items():
@@ -54,19 +41,6 @@ def get_filtered_ids(tokenizer):
 
 
 def get_valid_tokens_values(text, tokenizer, logits, vocab_dict, data_args, filtered_ids):
-    # if not data_args.sparse_exact_match:
-    #     if not data_args.encode_is_query:
-    #         # no constraint
-    #         indices = torch.nonzero(logits)
-    #         values = logits[indices]
-    #         values = np.rint(values.cpu().detach().float().numpy() * 100).astype(int)
-    #         tokens = [vocab_dict[i.item()] for i in indices.cpu().detach().float().numpy()]
-    #     else:
-    #         # topk constraint
-    #         top_k_values, top_k_indices = logits.topk(1000, dim=-1)
-    #         values = np.rint(top_k_values.cpu().detach().float().numpy() * 100).astype(int)
-    #         tokens = [vocab_dict[i.item()] for i in top_k_indices.cpu().detach().float().numpy()]
-    # else:
     words = [i for i in word_tokenize(text.lower()) if i not in stopwords]
     token_ids = set()
     for word in words:
