@@ -64,7 +64,6 @@ class PromptRepsSearchArguments:
     batch_size: int = field(default=128, metadata={"help": "Batch size for retrieval"})
     remove_query: bool = field(default=False, metadata={"help": "Whether to remove query id from the ranking"})
     threads: int = field(default=1, metadata={"help": "Number of threads for sparse retrieval"})
-    prf: int = field(default=0, metadata={"help": "Whether to use pseudo relevance feedback"})
 
 
 

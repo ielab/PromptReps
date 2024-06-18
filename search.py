@@ -36,19 +36,6 @@ stopwords = set(stopwords.words('english') + list(string.punctuation))
 import logging
 logger = logging.getLogger(__name__)
 
-PRF_templete = '''<|begin_of_text|><|start_header_id|>system<|end_header_id|>
-
-You are an AI assistant that can understand human language.<|eot_id|><|start_header_id|>user<|end_header_id|>
-
-Given the query: "{query}"
-
-Here are some passages that are likely relevant to the query:
-{passages}
-
-Now use one word to represent the query in a retrieval task. Make sure your word is in lowercase.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
-
-The word is: "'''
-
 
 def pickle_load(path):
     with open(path, 'rb') as f:
@@ -206,9 +193,6 @@ def main():
     dense_run = {}
     sparse_run = {}
     fusion_run = {}
-    # dense_prf_run = {}
-    # sparse_prf_run = {}
-    # fusion_prf_run = {}
 
     dense_retriever_indices = []
     sparse_retriever_indices = []
@@ -224,11 +208,6 @@ def main():
             sparse_retriever_indices = glob.glob(f'{search_args.sparse_index}*')
         else:
             sparse_retriever_indices = [search_args.sparse_index]
-
-    # index for getting document text from docid. Only for BEIR datasets
-    # docstore = None
-    # if search_args.prf:
-    #     docstore = LuceneSearcher.from_prebuilt_index(f'beir-v1.0.0-{data_args.dataset_config}.flat')
 
     for i in range(max(len(dense_retriever_indices), len(sparse_retriever_indices))):
         dense_retriever = None
@@ -342,79 +321,6 @@ def main():
             )
         )
 
-
-            # PRF
-            # if search_args.prf > 0 and fusion_run is not None:  # only implement for fusion for now
-            #     logger.info("Running PRF")
-            #
-            #     if docstore is None:
-            #         raise ValueError("Docstore is not provided.")
-            #     # top 3 docs
-            #     batch_prf_docs = {}
-            #     for qid in fusion_run:
-            #         batch_prf_docs[qid] = []
-            #         doc_score = fusion_run[qid]
-            #         doc_score = dict(sorted(doc_score.items(), key=lambda item: item[1], reverse=True))
-            #         for docid, score in list(doc_score.items())[:search_args.prf]:
-            #             data = json.loads(docstore.doc(str(docid)).raw())
-            #             text = data['text']
-            #             if 'title' in data:
-            #                 text = f'{data["title"]} {text}'
-            #             text = tokenizer.convert_tokens_to_string(
-            #                 tokenizer.tokenize(text.strip())[:data_args.passage_max_len]
-            #             )
-            #             batch_prf_docs[qid].append(text)
-            #
-            #     batch_prf_prompts = []
-            #     for qid, query in zip(batch_ids, batch_texts):
-            #         passages = [f'Passage {i+1}: "{p}"' for i, p in enumerate(batch_prf_docs[qid])]
-            #         query = tokenizer.convert_tokens_to_string(
-            #             tokenizer.tokenize(query.strip())[:data_args.query_max_len]
-            #         )
-            #         batch_prf_prompts.append(PRF_templete.format(query=query,
-            #                                                      passages='\n'.join(passages)))
-            #
-            #     prf_inputs = tokenizer(
-            #         batch_prf_prompts,
-            #         padding=True,
-            #         add_special_tokens=False,
-            #         pad_to_multiple_of=data_args.pad_to_multiple_of,
-            #         return_attention_mask=True,
-            #         return_tensors='pt',
-            #     )
-            #
-            #     prf_inputs = prf_inputs.to(training_args.device)
-            #     prf_output = model(query=prf_inputs)
-            #     prf_sparse_reps, prf_dense_reps = prf_output.q_reps
-            #
-            #     if dense_retriever is not None:
-            #         prf_dense_reps = prf_dense_reps.cpu().detach().float().numpy()
-            #         prf_dense_scores, prf_dense_rankings = search_queries(dense_retriever, prf_dense_reps, look_up, search_args)
-            #         dense_prf_run.update(get_run_dict(batch_ids, prf_dense_scores, prf_dense_rankings, search_args.remove_query))
-            #
-            #     if sparse_retriever is not None:
-            #         batch_topics = []
-            #         for qid, logits, text in zip(batch_ids, prf_sparse_reps, batch_texts):
-            #             # text = ' '.join(batch_prf_docs[qid])
-            #             # text += ' ' + query
-            #             tokens, values = get_valid_tokens_values(text, tokenizer, logits, vocab_dict, data_args, filtered_ids)
-            #             query = ""
-            #             for token, v in zip(tokens, values):
-            #                 query += (' ' + token) * v
-            #             batch_topics.append(query.strip())
-            #
-            #         sparse_prf_run.update(sparse_search(sparse_retriever, batch_topics, batch_ids, search_args))
-            #
-            #     if dense_retriever is not None and sparse_retriever is not None:
-            #         fusion_prf_run.update(
-            #             fuse(
-            #                 runs=[dense_prf_run, sparse_prf_run],
-            #                 weights=[search_args.alpha, (1 - search_args.alpha)]
-            #             )
-            #         )
-            #     else:
-            #         raise ValueError("Both dense and sparse retriever are not provided.")
-
     # check if the save directory exists
     if not os.path.exists(search_args.save_dir):
         os.makedirs(search_args.save_dir)
@@ -430,15 +336,6 @@ def main():
     if len(fusion_run) > 0:
         save_file = os.path.join(search_args.save_dir, 'rank.hybrid.trec')
         write_trec_run(fusion_run, save_file, name='hybrid')
-    # if len(dense_prf_run) > 0:
-    #     save_file = os.path.join(search_args.save_dir, 'rank.dense.prf.trec')
-    #     write_trec_run(dense_prf_run, save_file, name='dense_prf')
-    # if len(sparse_prf_run) > 0:
-    #     save_file = os.path.join(search_args.save_dir, 'rank.sparse.prf.trec')
-    #     write_trec_run(sparse_prf_run, save_file, name='sparse_prf')
-    # if len(fusion_prf_run) > 0:
-    #     save_file = os.path.join(search_args.save_dir, 'rank.hybrid.prf.trec')
-    #     write_trec_run(fusion_prf_run, save_file, name='hybrid_prf')
 
 
 if __name__ == '__main__':
