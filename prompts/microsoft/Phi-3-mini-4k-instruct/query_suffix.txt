@@ -1,1 +1,1 @@
-". Use one most important word to represent the query in retrieval task. Make sure your word is in lowercase.<|end|>\n<|assistant|>\nThe word is: "
+". Use one word to represent the query in a retrieval task. Make sure your word is in lowercase.<|end|>\n<|assistant|>\nThe word is: "

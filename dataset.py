@@ -1,12 +1,18 @@
 import logging
 from transformers import AutoTokenizer, AutoModelForCausalLM, PreTrainedTokenizer
 from tevatron.retriever.dataset import EncodeDataset, TrainDataset
+from tevatron.retriever.collator import TrainCollator
 from datasets import load_dataset
 from torch.utils.data import Dataset
 from typing import Tuple, List
 from dataclasses import dataclass
 from arguments import PromptRepsDataArguments
 import random
+from nltk import word_tokenize
+from nltk.corpus import stopwords
+import torch
+import string
+stopwords = set(stopwords.words('english') + list(string.punctuation))
 
 logger = logging.getLogger(__name__)
 
@@ -47,10 +53,10 @@ class PromptRepsEncodeCollator:
         )
         prefix = self.data_args.query_prefix if self.data_args.encode_is_query else self.data_args.passage_prefix
         suffix = self.data_args.query_suffix if self.data_args.encode_is_query else self.data_args.passage_suffix
+        prefix_ids = self.tokenizer.encode(prefix, add_special_tokens=False)
+        suffix_ids = self.tokenizer.encode(suffix, add_special_tokens=False)
 
-        collated_texts['input_ids'] = [self.tokenizer.encode(prefix, add_special_tokens=False) + input_ids +
-                                       self.tokenizer.encode(suffix, add_special_tokens=False)
-                                       for input_ids in collated_texts['input_ids']]
+        collated_texts['input_ids'] = [prefix_ids + input_ids + suffix_ids for input_ids in collated_texts['input_ids']]
 
         collated_texts = self.tokenizer.pad(
             collated_texts,
@@ -81,7 +87,7 @@ class PromptRepsTrainDataset(Dataset):
     def __len__(self):
         return len(self.train_data)
 
-    def __getitem__(self, item) -> Tuple[str, List[str]]:
+    def __getitem__(self, item) -> Tuple[str, List[str], List[str], List[List[str]]]:
         group = self.train_data[item]
         epoch = int(self.trainer.state.epoch)
 
@@ -92,14 +98,18 @@ class PromptRepsTrainDataset(Dataset):
         group_negatives = group['negative_passages']
 
         formated_query = query
+        query_words = [i for i in word_tokenize(query.lower()) if i not in stopwords]
+
         formated_passages = []
+        passages_words = []
 
         if self.data_args.positive_passage_no_shuffle:
             pos_psg = group_positives[0]
         else:
             pos_psg = group_positives[(_hashed_seed + epoch) % len(group_positives)]
-
-        formated_passages.append(f"{pos_psg['title']} {pos_psg['text']}")
+        formated_passage = f"{pos_psg['title']} {pos_psg['text']}".strip()
+        formated_passages.append(formated_passage)
+        passages_words.append([i for i in word_tokenize(formated_passage.lower()) if i not in stopwords])
 
         negative_size = self.data_args.train_group_size - 1
         if len(group_negatives) < negative_size:
@@ -116,26 +126,40 @@ class PromptRepsTrainDataset(Dataset):
             negs = negs[_offset: _offset + negative_size]
 
         for neg_psg in negs:
-            formated_passages.append(f"{neg_psg['title']} {neg_psg['text']}")
+            formated_passage = f"{neg_psg['title']} {neg_psg['text']}".strip()
+            formated_passages.append(formated_passage)
+            passages_words.append([i for i in word_tokenize(formated_passage.lower()) if i not in stopwords])
 
-        return formated_query, formated_passages
+        return formated_query, formated_passages, query_words, passages_words
 
 
 @dataclass
-class PromptRepsTrainCollator:
+class PromptRepsTrainCollator(TrainCollator):
     data_args: PromptRepsDataArguments
-    tokenizer: PreTrainedTokenizer
 
-    def __call__(self, features: List[Tuple[str, List[str]]]):
+    def __call__(self, features: List[Tuple[str, List[str], List[str], List[List[str]]]]):
         """
         Collate function for training.
         :param features: list of (query, passages) tuples
         :return: tokenized query_ids, passage_ids
         """
-        all_queries = [f[0] for f in features]
+        all_queries = []
         all_passages = []
+        query_words_ids = []
+        passage_words_ids = []
         for f in features:
+            all_queries.append(f[0])
             all_passages.extend(f[1])
+            token_ids = set()
+            for word in f[2]:
+                token_ids.update(self.tokenizer.encode(word, add_special_tokens=False))
+            query_words_ids.append(list(token_ids))
+            for p in f[3]:
+                token_ids = set()
+                for word in p:
+                    token_ids.update(self.tokenizer.encode(word, add_special_tokens=False))
+                passage_words_ids.append(list(token_ids))
+
         q_collated = self.tokenizer(
             all_queries,
             padding=False,
@@ -154,14 +178,14 @@ class PromptRepsTrainCollator:
             return_token_type_ids=False,
             add_special_tokens=False,
         )
+        query_prefix_ids = self.tokenizer.encode(self.data_args.query_prefix, add_special_tokens=False)
+        query_suffix_ids = self.tokenizer.encode(self.data_args.query_suffix, add_special_tokens=False)
+        passage_prefix_ids = self.tokenizer.encode(self.data_args.passage_prefix, add_special_tokens=False)
+        passage_suffix_ids = self.tokenizer.encode(self.data_args.passage_suffix, add_special_tokens=False)
 
-        q_collated['input_ids'] = [self.tokenizer.encode(self.data_args.query_prefix, add_special_tokens=False)
-                                   + input_ids
-                                   + self.tokenizer.encode(self.data_args.query_suffix, add_special_tokens=False)
+        q_collated['input_ids'] = [query_prefix_ids + input_ids + query_suffix_ids
                                    for input_ids in q_collated['input_ids']]
-        d_collated['input_ids'] = [self.tokenizer.encode(self.data_args.passage_prefix, add_special_tokens=False)
-                                   + input_ids
-                                   + self.tokenizer.encode(self.data_args.passage_suffix, add_special_tokens=False)
+        d_collated['input_ids'] = [passage_prefix_ids + input_ids + passage_suffix_ids
                                    for input_ids in d_collated['input_ids']]
 
         q_collated = self.tokenizer.pad(
@@ -178,4 +202,9 @@ class PromptRepsTrainCollator:
             return_attention_mask=True,
             return_tensors='pt',
         )
-        return q_collated, d_collated
+        inputs = {'query': q_collated,
+                  'passage': d_collated,
+                  'query_words_ids': query_words_ids,
+                  'passage_words_ids': passage_words_ids}
+        return inputs
+

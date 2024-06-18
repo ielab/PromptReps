@@ -1,1 +1,1 @@
-". Use one most important word to represent the passage in retrieval task. Make sure your word is in lowercase.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nThe word is: "
+". Use one word to represent the passage in a retrieval task. Make sure your word is in lowercase.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nThe word is: "
