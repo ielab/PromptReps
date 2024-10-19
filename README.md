@@ -9,6 +9,7 @@
 
 
 ## Updates
+- 10/10/2024: Our paper has been accepted by EMNLP 2024! We update the arxiv paper with some corrections and more results. We also added training script for supervised fine-tuning on Hybrid search.
 - 17/06/2024: Arxiv v2 is online. We have updated the paper with more experiments and results, including investigations on the impact of different prompts and the alternative representations. We also refactored the code.
 
 ## Installation
@@ -621,6 +622,51 @@ ndcg_cut_10             all     0.3005
 > Note: the sparse results and so that hybrid results are insignificantly different from what was reported in the paper likely due to different mixed precision inference.
 
 </details>
+
+---
+
+## Supervised training on Hybrid search
+
+```bash
+BASE_MODEL=meta-llama/Meta-Llama-3-8B-Instruct
+
+deepspeed --include localhost:0,1,2,3 --master_port 60000 train.py \
+  --deepspeed tevatron/deepspeed/ds_zero3_config.json \
+  --output_dir checkpoint-promptreps-hybrid-sup/${BASE_MODEL} \
+  --model_name_or_path ${BASE_MODEL} \
+  --lora \
+  --lora_target_modules q_proj,k_proj,v_proj,o_proj,down_proj,up_proj,gate_proj \
+  --save_steps 1000 \
+  --dataset_name Tevatron/msmarco-passage-aug \
+  --query_prefix prompts/${BASE_MODEL}/query_prefix.txt \
+  --query_suffix prompts/${BASE_MODEL}/query_suffix.txt \
+  --passage_prefix prompts/${BASE_MODEL}/passage_prefix.txt \
+  --passage_suffix prompts/${BASE_MODEL}/passage_suffix.txt \
+  --bf16 \
+  --normalize \
+  --temperature 0.01 \
+  --per_device_train_batch_size 8 \
+  --per_device_eval_batch_size 8 \
+  --gradient_checkpointing \
+  --gradient_accumulation_steps 4 \
+  --train_group_size 16 \
+  --learning_rate 1e-4 \
+  --query_max_len 32 \
+  --passage_max_len 156 \
+  --num_train_epochs 1 \
+  --report_to wandb \
+  --run_name PromptReps \
+  --logging_steps 10 \
+  --log_level info \
+  --save_early_checkpoints \
+  --cache_dir cache_models \
+  --dataset_cache_dir cache_datasets
+
+```
+
+Lora weights will be saved in the `checkpoint-promptreps-hybrid-sup/${BASE_MODEL}` directory.
+Then you can add `--lora_name_or_path checkpoint-promptreps-hybrid-sup/${BASE_MODEL}` argument to `encode.py` for inference with the saved lora checkpoint.
+
 
 ---
 
