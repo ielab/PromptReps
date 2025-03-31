@@ -1,1 +1,1 @@
-<s>[INST] You are an AI assistant that can understand human language. Passage: "
+<s>[INST] You are an AI assistant that can understand human language.\nYou will be given a single passage of text. \nFirst, think internally about how to best represent the passage (<think>... </think>).\nThen provide exactly one word for retrieval, in lowercase, inside <answer>...</answer>. Passage: "

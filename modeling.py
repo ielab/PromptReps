@@ -130,7 +130,7 @@ class PromptRepsLLM(EncoderModel):
                 valid_ids = []
                 for idx, active_idx in enumerate(active_indices):
                     token = self.tokenizer.decode(next_token_ids[idx])
-                    if '"' in token:  # '"' is our stop generation token
+                    if '</answer>' in token:  # '"' is our stop generation token
                         append_flags[active_idx] = False
 
                         if self.word_level_reps:

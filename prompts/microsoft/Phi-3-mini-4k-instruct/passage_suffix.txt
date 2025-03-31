@@ -1,1 +1,1 @@
-". Use one word to represent the passage in a retrieval task. Make sure your word is in lowercase.<|end|>\n<|assistant|>\nThe word is: "
+".\nUse one word to represent the passage in a retrieval task.\nMake sure your word is in lowercase.<|end|>\n\n<|assistant|>\n<think>\n Please write your reasoning steps here,\n but do not reveal them in the final answer.\nFor instance, analyze the main concept or topic of the passage.\n</think>\n<answer>

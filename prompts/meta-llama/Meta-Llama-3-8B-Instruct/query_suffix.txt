@@ -1,1 +1,1 @@
-". Use one word to represent the query in a retrieval task. Make sure your word is in lowercase.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nThe word is: "
+".\nUse one word to represent the query in a retrieval task.\nMake sure your word is in lowercase.\n\n<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n<think>\n Please write your reasoning steps here,\n but do not reveal them in the final answer.\nFor instance, analyze the main concept or topic of the query.\n</think>\n<answer>
