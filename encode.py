@@ -24,6 +24,33 @@ from modeling import PromptRepsLLM
 from nltk import word_tokenize
 from nltk.corpus import stopwords
 import string
+
+# Enable or disable debug print output globally
+DEBUG_MODE = True  # Set to False to turn off debugging prints
+# Function to print debug information for each sample
+def debug_print(docid, text, tokens, values):
+    if not DEBUG_MODE:
+        return  # Do nothing if debugging is disabled
+
+    # Print a separator line
+    print("=" * 40)
+
+    # Print the document/query ID
+    print(f"[ID] {docid}")
+
+    # Print the original input text
+    print(f"[TEXT] {text}")
+
+    # Print the generated tokens used for sparse vector
+    print(f"[TOKENS] {tokens}")
+
+    # Print the corresponding logit values for each token
+    print(f"[LOGIT VALUES] {values}")
+
+    # Print a separator line
+    print("=" * 40)
+
+
 stopwords = set(stopwords.words('english') + list(string.punctuation))
 
 logger = logging.getLogger(__name__)
@@ -167,6 +194,9 @@ def main():
                             encoded[i].append(reps[i].cpu().detach().float().numpy())
                             lookup_indices[i].append(docid)
 
+                            # Debug output for this token in the sequence
+                            debug_print(f"{docid}-token{i}", text, tokens, values)
+
                             vector = dict()
                             tokens, values = get_valid_tokens_values(text, tokenizer, logits[i], vocab_dict,
                                                                      data_args, filtered_ids)
@@ -184,6 +214,10 @@ def main():
                     lookup_indices.extend(batch_ids)
                     encoded.append(next_token_reps.cpu().detach().float().numpy())
                     for docid, logits, text in zip(batch_ids, next_token_logits, batch_texts):
+
+                        # Debug output: show ID, text, tokens, and logit values
+                        debug_print(docid, text, tokens, values)
+
                         vector = dict()
                         tokens, values = get_valid_tokens_values(text, tokenizer, logits, vocab_dict, data_args,
                                                                  filtered_ids)
