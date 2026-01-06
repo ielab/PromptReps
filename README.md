@@ -672,12 +672,23 @@ Then you can add `--lora_name_or_path checkpoint-promptreps-hybrid-sup/${BASE_MO
 
 If you used our code for your research, please consider to cite our paper :)
 ```bibtex
-@misc{zhuang2024promptreps,
-      title={PromptReps: Prompting Large Language Models to Generate Dense and Sparse Representations for Zero-Shot Document Retrieval}, 
-      author={Shengyao Zhuang and Xueguang Ma and Bevan Koopman and Jimmy Lin and Guido Zuccon},
-      year={2024},
-      eprint={2404.18424},
-      archivePrefix={arXiv},
-      primaryClass={cs.IR}
+@inproceedings{zhuang-etal-2024-promptreps,
+    title = "{P}rompt{R}eps: Prompting Large Language Models to Generate Dense and Sparse Representations for Zero-Shot Document Retrieval",
+    author = "Zhuang, Shengyao  and
+      Ma, Xueguang  and
+      Koopman, Bevan  and
+      Lin, Jimmy  and
+      Zuccon, Guido",
+    editor = "Al-Onaizan, Yaser  and
+      Bansal, Mohit  and
+      Chen, Yun-Nung",
+    booktitle = "Proceedings of the 2024 Conference on Empirical Methods in Natural Language Processing",
+    month = nov,
+    year = "2024",
+    address = "Miami, Florida, USA",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2024.emnlp-main.250/",
+    doi = "10.18653/v1/2024.emnlp-main.250",
+    pages = "4375--4391",
 }
 ```
