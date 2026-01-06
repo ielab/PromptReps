@@ -161,7 +161,7 @@ python -m pyserini.index.lucene \
   --impact --pretokenized
 ```
 
-### Step 3: Retireval.
+### Step 3: Retrieval.
 ```bash
 python search.py \
     --output_dir=temp \
